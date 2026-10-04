@@ -35,7 +35,6 @@ Kotlin, Jetpack Compose, Material 3, Navigation Compose, Room, Coroutines, ViewM
 ├── .devcontainer/       # Codespaces Java and Android SDK setup
 ├── .github/workflows/   # Android build, tests, and APK artifact
 ├── app/src/main/java/   # Compose UI, ViewModel, Room data and seed content
-├── app/src/main/res/    # Android resources
 ├── app/src/test/        # Offline search and assistant unit tests
 ├── app/build.gradle.kts
 ├── gradle/              # Gradle wrapper configuration
