@@ -1,0 +1,24 @@
+{
+  "name": "HackBitsKannada Android Lab",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "jdkDistro": "ms"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup-android.sh",
+  "remoteEnv": {
+    "ANDROID_HOME": "${containerEnv:HOME}/android-sdk",
+    "ANDROID_SDK_ROOT": "${containerEnv:HOME}/android-sdk",
+    "PATH": "${containerEnv:HOME}/android-sdk/cmdline-tools/latest/bin:${containerEnv:HOME}/android-sdk/platform-tools:${containerEnv:PATH}"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "fwcd.kotlin"
+      ]
+    }
+  }
+}

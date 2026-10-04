@@ -1,0 +1,16 @@
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/ui/Components.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/ui/LibraryScreens.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/data/Entities.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/data/LearningSeed.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/ui/EducationalFallback.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/ui/LibraryViewModel.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/ui/Theme.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/MainActivity.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/data/AppDatabase.kt
+/workspaces/HackBitsKannadatools/app/build/generated/ksp/debug/kotlin/com/hackbitskannada/lab/data/ContentDao_Impl.kt
+/workspaces/HackBitsKannadatools/app/build/generated/ksp/debug/kotlin/com/hackbitskannada/lab/data/AppDatabase_Impl.kt
+/workspaces/HackBitsKannadatools/app/build/generated/ksp/debug/kotlin/com/hackbitskannada/lab/data/UserDataDao_Impl.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/data/CommandSeed.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/ui/ContentDetailScreen.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/ui/AppNavigation.kt
+/workspaces/HackBitsKannadatools/app/src/main/java/com/hackbitskannada/lab/data/LibraryRepository.kt
