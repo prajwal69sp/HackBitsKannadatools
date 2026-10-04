@@ -5,6 +5,19 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+val appVersionCode = providers.gradleProperty("appVersionCode").orNull?.toIntOrNull() ?: 1
+val appVersionName = providers.gradleProperty("appVersionName").orNull ?: "1.0.0"
+val releaseKeystoreFile = providers.environmentVariable("ANDROID_KEYSTORE_FILE").orNull
+val releaseStorePassword = providers.environmentVariable("ANDROID_STORE_PASSWORD").orNull
+val releaseKeyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").orNull
+val releaseKeyPassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").orNull
+val releaseSigningConfigured = listOf(
+    releaseKeystoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+).all { !it.isNullOrBlank() }
+
 android {
     namespace = "com.hackbitskannada.lab"
     compileSdk = 36
@@ -13,9 +26,28 @@ android {
         applicationId = "com.hackbitskannada.lab"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        if (releaseSigningConfigured) {
+            create("release") {
+                storeFile = file(checkNotNull(releaseKeystoreFile))
+                storePassword = checkNotNull(releaseStorePassword)
+                keyAlias = checkNotNull(releaseKeyAlias)
+                keyPassword = checkNotNull(releaseKeyPassword)
+            }
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            if (releaseSigningConfigured) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
     }
 
     buildFeatures {

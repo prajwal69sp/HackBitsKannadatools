@@ -33,7 +33,7 @@ Kotlin, Jetpack Compose, Material 3, Navigation Compose, Room, Coroutines, ViewM
 ```text
 .
 ├── .devcontainer/       # Codespaces Java and Android SDK setup
-├── .github/workflows/   # Android build, tests, and APK artifact
+├── .github/workflows/   # Android CI and signed GitHub releases
 ├── app/src/main/java/   # Compose UI, ViewModel, Room data and seed content
 ├── app/src/test/        # Offline search and assistant unit tests
 ├── app/build.gradle.kts
@@ -62,6 +62,26 @@ Open the repository in a Codespace. The dev container installs JDK 17 and downlo
 ```
 
 The workflow at `.github/workflows/android.yml` runs the unit tests and debug build for pushes, pull requests, and manual dispatch. It uploads `app-debug.apk` as the `hackbitskannada-debug-apk` artifact.
+
+## Publish a signed release
+
+Push a semantic-version tag such as `v1.2.3` to build and publish a GitHub release containing a signed APK, an Android App Bundle (AAB), and their SHA-256 checksums:
+
+```bash
+git tag v1.2.3
+git push origin v1.2.3
+```
+
+Before publishing the first release, add these repository Actions secrets:
+
+- `ANDROID_KEYSTORE_BASE64`: the release keystore encoded as a single-line Base64 value.
+- `ANDROID_STORE_PASSWORD`: the keystore password.
+- `ANDROID_KEY_ALIAS`: the signing key alias.
+- `ANDROID_KEY_PASSWORD`: the signing key password.
+
+Keep the keystore and passwords backed up securely; releases should continue using the same signing key. For example, create a keystore with `keytool -genkeypair -v -keystore release.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000`, then encode it for the Base64 secret with `base64 -w 0 release.jks`. Never commit the keystore or signing credentials.
+
+The release workflow runs unit tests before building. It uses the tag (without the `v`) as the Android version name and the GitHub Actions run number as the monotonically increasing version code. Release builds are signed in CI; local `assembleRelease` builds without the signing environment variables are unsigned and are not suitable for distribution. To build local release variants, run `./gradlew assembleRelease bundleRelease`; the outputs are `app/build/outputs/apk/release/app-release-unsigned.apk` and `app/build/outputs/bundle/release/app-release.aab`.
 
 ## Build an APK
 
