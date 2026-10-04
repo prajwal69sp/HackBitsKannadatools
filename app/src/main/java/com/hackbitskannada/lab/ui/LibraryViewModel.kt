@@ -42,7 +42,10 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     val assistantAnswer = mutableAssistantAnswer
 
     init {
-        viewModelScope.launch { repository.seedIfNeeded() }
+        viewModelScope.launch {
+            repository.seedIfNeeded()
+            repository.syncPublishedContent()
+        }
     }
 
     fun setSearchQuery(value: String) {

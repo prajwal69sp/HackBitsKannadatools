@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: hackbitskannada-admin
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run db:generate && npm run build
+    preDeployCommand: npm run db:deploy
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hackbitskannada-db
+          property: connectionString
+      - key: ADMIN_SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: MEDIA_PUBLIC_URL
+        sync: false
+
+databases:
+  - name: hackbitskannada-db
+    databaseName: hackbitskannada
+    user: hackbitskannada
+    plan: basic-256mb
+    ipAllowList: []

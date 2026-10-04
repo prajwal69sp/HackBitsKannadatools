@@ -1,0 +1,287 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  EDITOR
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ContentPlatform {
+  TERMUX
+  LINUX
+  ANDROID_LINUX
+  GENERAL
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum AdminStatus {
+  ACTIVE
+  DISABLED
+}
+
+model AdminUser {
+  id           String       @id @default(cuid())
+  name         String
+  email        String       @unique
+  passwordHash String
+  role         AdminRole    @default(EDITOR)
+  status       AdminStatus  @default(ACTIVE)
+  lastLoginAt  DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  sessions     Session[]
+  auditLogs    AuditLog[]
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  adminId   String
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  admin     AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId, expiresAt])
+}
+
+model LoginAttempt {
+  id          String   @id @default(cuid())
+  ipHash      String   @unique
+  failures    Int      @default(0)
+  lockedUntil DateTime?
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String   @default("")
+  section     String   @default("General")
+  sortOrder   Int      @default(0)
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  commands  CommandTag[]
+  scripts   ScriptTag[]
+  tools     ToolTag[]
+  tutorials TutorialTag[]
+}
+
+model Command {
+  id              String          @id @default(cuid())
+  title           String
+  command         String
+  category        String
+  platform        ContentPlatform @default(GENERAL)
+  description     String           @db.Text
+  syntax          String           @default("")
+  example         String           @default("") @db.Text
+  expectedOutput  String           @default("") @db.Text
+  difficulty      Difficulty       @default(BEGINNER)
+  warning         String           @default("") @db.Text
+  relatedCommands String           @default("")
+  status          ContentStatus    @default(DRAFT)
+  featured        Boolean          @default(false)
+  viewCount       Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  tags            CommandTag[]
+
+  @@index([status, platform, category])
+  @@index([title])
+  @@index([updatedAt])
+}
+
+model CommandTag {
+  commandId String
+  tagId     String
+  command   Command @relation(fields: [commandId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([commandId, tagId])
+}
+
+model Script {
+  id              String       @id @default(cuid())
+  title           String
+  language        String
+  category        String
+  description     String       @db.Text
+  code            String       @db.Text
+  explanation     String       @default("") @db.Text
+  usage           String       @default("") @db.Text
+  exampleOutput   String       @default("") @db.Text
+  lineExplanations Json        @default("[]")
+  difficulty      Difficulty   @default(BEGINNER)
+  warning         String       @default("") @db.Text
+  status          ContentStatus @default(DRAFT)
+  featured        Boolean      @default(false)
+  viewCount       Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  tags            ScriptTag[]
+
+  @@index([status, category])
+  @@index([title])
+}
+
+model ScriptTag {
+  scriptId String
+  tagId    String
+  script   Script @relation(fields: [scriptId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([scriptId, tagId])
+}
+
+model Tool {
+  id                 String          @id @default(cuid())
+  name               String
+  description        String          @db.Text
+  category           String
+  platform           ContentPlatform @default(GENERAL)
+  installationCommand String         @default("") @db.Text
+  basicUsage         String          @default("") @db.Text
+  examples           String          @default("") @db.Text
+  documentation      String          @default("")
+  difficulty         Difficulty      @default(BEGINNER)
+  warning            String          @default("") @db.Text
+  status             ContentStatus   @default(DRAFT)
+  featured           Boolean         @default(false)
+  viewCount          Int             @default(0)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  tags               ToolTag[]
+
+  @@index([status, category, platform])
+  @@index([name])
+}
+
+model ToolTag {
+  toolId String
+  tagId  String
+  tool   Tool @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([toolId, tagId])
+}
+
+model Tutorial {
+  id           String       @id @default(cuid())
+  title        String
+  description  String       @db.Text
+  category     String
+  difficulty   Difficulty   @default(BEGINNER)
+  coverImage   String       @default("")
+  estimatedMinutes Int     @default(0)
+  status       ContentStatus @default(DRAFT)
+  featured     Boolean      @default(false)
+  viewCount    Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  lessons      Lesson[]
+  tags         TutorialTag[]
+
+  @@index([status, category, difficulty])
+  @@index([title])
+}
+
+model Lesson {
+  id           String   @id @default(cuid())
+  tutorialId   String
+  title        String
+  content      String   @db.Text
+  codeExamples Json     @default("[]")
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tutorial     Tutorial @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+
+  @@index([tutorialId, sortOrder])
+}
+
+model TutorialTag {
+  tutorialId String
+  tagId      String
+  tutorial   Tutorial @relation(fields: [tutorialId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([tutorialId, tagId])
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  filename     String
+  storagePath  String   @unique
+  mimeType     String
+  sizeBytes    Int
+  altText      String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AppConfig {
+  id             String   @id @default("main")
+  appName        String   @default("HackBitsKannada")
+  subtitle       String   @default("Termux & Linux Lab")
+  about          String   @default("HackBitsKannada is a technology-focused learning platform created to make Termux, Linux, programming, AI tools, Android customization, web development, app development and ethical hacking easier to understand.") @db.Text
+  description    String   @default("") @db.Text
+  version        String   @default("1.0.0")
+  maintenance    Boolean  @default(false)
+  contactEmail   String   @default("")
+  socialLinks    Json     @default("{}")
+  privacyPolicy  String   @default("") @db.Text
+  disclaimer     String   @default("Use security tools only on systems you own or have explicit permission to test. HackBitsKannada provides educational material for responsible security learning, authorized testing, personal laboratories and CTF environments.") @db.Text
+  aboutSections  Json     @default("{}")
+  updatedAt      DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String    @id @default(cuid())
+  adminId   String?
+  adminName String
+  action    String
+  entity    String
+  entityId  String?
+  details   Json      @default("{}")
+  createdAt DateTime  @default(now())
+  admin     AdminUser? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([adminId, createdAt])
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  eventType String
+  entity    String
+  entityId  String
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId, createdAt])
+  @@index([eventType, createdAt])
+}

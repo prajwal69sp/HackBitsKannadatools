@@ -36,6 +36,16 @@ public class ContentDao_Impl(
   private val __insertAdapterOfToolEntity: EntityInsertAdapter<ToolEntity>
 
   private val __insertAdapterOfTutorialEntity: EntityInsertAdapter<TutorialEntity>
+
+  private val __insertAdapterOfCategoryEntity_1: EntityInsertAdapter<CategoryEntity>
+
+  private val __insertAdapterOfCommandEntity_1: EntityInsertAdapter<CommandEntity>
+
+  private val __insertAdapterOfScriptEntity_1: EntityInsertAdapter<ScriptEntity>
+
+  private val __insertAdapterOfToolEntity_1: EntityInsertAdapter<ToolEntity>
+
+  private val __insertAdapterOfTutorialEntity_1: EntityInsertAdapter<TutorialEntity>
   init {
     this.__db = __db
     this.__insertAdapterOfRecentlyViewedEntity = object :
@@ -128,6 +138,85 @@ public class ContentDao_Impl(
         statement.bindText(7, entity.tags)
       }
     }
+    this.__insertAdapterOfCategoryEntity_1 = object : EntityInsertAdapter<CategoryEntity>() {
+      protected override fun createQuery(): String =
+          "INSERT OR REPLACE INTO `categories` (`name`,`description`,`section`) VALUES (?,?,?)"
+
+      protected override fun bind(statement: SQLiteStatement, entity: CategoryEntity) {
+        statement.bindText(1, entity.name)
+        statement.bindText(2, entity.description)
+        statement.bindText(3, entity.section)
+      }
+    }
+    this.__insertAdapterOfCommandEntity_1 = object : EntityInsertAdapter<CommandEntity>() {
+      protected override fun createQuery(): String =
+          "INSERT OR REPLACE INTO `commands` (`id`,`title`,`command`,`category`,`description`,`syntax`,`example`,`expectedUsage`,`difficulty`,`tags`,`warning`,`relatedCommands`,`createdAt`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+
+      protected override fun bind(statement: SQLiteStatement, entity: CommandEntity) {
+        statement.bindText(1, entity.id)
+        statement.bindText(2, entity.title)
+        statement.bindText(3, entity.command)
+        statement.bindText(4, entity.category)
+        statement.bindText(5, entity.description)
+        statement.bindText(6, entity.syntax)
+        statement.bindText(7, entity.example)
+        statement.bindText(8, entity.expectedUsage)
+        statement.bindText(9, entity.difficulty)
+        statement.bindText(10, entity.tags)
+        statement.bindText(11, entity.warning)
+        statement.bindText(12, entity.relatedCommands)
+        statement.bindLong(13, entity.createdAt)
+      }
+    }
+    this.__insertAdapterOfScriptEntity_1 = object : EntityInsertAdapter<ScriptEntity>() {
+      protected override fun createQuery(): String =
+          "INSERT OR REPLACE INTO `scripts` (`id`,`title`,`category`,`difficulty`,`purpose`,`code`,`explanation`,`howToRun`,`expectedOutput`,`safetyNotes`) VALUES (?,?,?,?,?,?,?,?,?,?)"
+
+      protected override fun bind(statement: SQLiteStatement, entity: ScriptEntity) {
+        statement.bindText(1, entity.id)
+        statement.bindText(2, entity.title)
+        statement.bindText(3, entity.category)
+        statement.bindText(4, entity.difficulty)
+        statement.bindText(5, entity.purpose)
+        statement.bindText(6, entity.code)
+        statement.bindText(7, entity.explanation)
+        statement.bindText(8, entity.howToRun)
+        statement.bindText(9, entity.expectedOutput)
+        statement.bindText(10, entity.safetyNotes)
+      }
+    }
+    this.__insertAdapterOfToolEntity_1 = object : EntityInsertAdapter<ToolEntity>() {
+      protected override fun createQuery(): String =
+          "INSERT OR REPLACE INTO `tools` (`id`,`name`,`category`,`description`,`purpose`,`installCommand`,`basicUsage`,`example`,`commonErrors`,`troubleshooting`,`safetyNote`) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+
+      protected override fun bind(statement: SQLiteStatement, entity: ToolEntity) {
+        statement.bindText(1, entity.id)
+        statement.bindText(2, entity.name)
+        statement.bindText(3, entity.category)
+        statement.bindText(4, entity.description)
+        statement.bindText(5, entity.purpose)
+        statement.bindText(6, entity.installCommand)
+        statement.bindText(7, entity.basicUsage)
+        statement.bindText(8, entity.example)
+        statement.bindText(9, entity.commonErrors)
+        statement.bindText(10, entity.troubleshooting)
+        statement.bindText(11, entity.safetyNote)
+      }
+    }
+    this.__insertAdapterOfTutorialEntity_1 = object : EntityInsertAdapter<TutorialEntity>() {
+      protected override fun createQuery(): String =
+          "INSERT OR REPLACE INTO `tutorials` (`id`,`title`,`level`,`section`,`lessonOrder`,`body`,`tags`) VALUES (?,?,?,?,?,?,?)"
+
+      protected override fun bind(statement: SQLiteStatement, entity: TutorialEntity) {
+        statement.bindText(1, entity.id)
+        statement.bindText(2, entity.title)
+        statement.bindText(3, entity.level)
+        statement.bindText(4, entity.section)
+        statement.bindLong(5, entity.lessonOrder.toLong())
+        statement.bindText(6, entity.body)
+        statement.bindText(7, entity.tags)
+      }
+    }
   }
 
   public override suspend fun recordViewed(item: RecentlyViewedEntity): Unit =
@@ -158,6 +247,31 @@ public class ContentDao_Impl(
   public override suspend fun insertTutorials(items: List<TutorialEntity>): Unit =
       performSuspending(__db, false, true) { _connection ->
     __insertAdapterOfTutorialEntity.insert(_connection, items)
+  }
+
+  public override suspend fun upsertSyncedCategories(items: List<CategoryEntity>): Unit =
+      performSuspending(__db, false, true) { _connection ->
+    __insertAdapterOfCategoryEntity_1.insert(_connection, items)
+  }
+
+  public override suspend fun upsertSyncedCommands(items: List<CommandEntity>): Unit =
+      performSuspending(__db, false, true) { _connection ->
+    __insertAdapterOfCommandEntity_1.insert(_connection, items)
+  }
+
+  public override suspend fun upsertSyncedScripts(items: List<ScriptEntity>): Unit =
+      performSuspending(__db, false, true) { _connection ->
+    __insertAdapterOfScriptEntity_1.insert(_connection, items)
+  }
+
+  public override suspend fun upsertSyncedTools(items: List<ToolEntity>): Unit =
+      performSuspending(__db, false, true) { _connection ->
+    __insertAdapterOfToolEntity_1.insert(_connection, items)
+  }
+
+  public override suspend fun upsertSyncedTutorials(items: List<TutorialEntity>): Unit =
+      performSuspending(__db, false, true) { _connection ->
+    __insertAdapterOfTutorialEntity_1.insert(_connection, items)
   }
 
   public override fun observeCategories(): Flow<List<CategoryEntity>> {

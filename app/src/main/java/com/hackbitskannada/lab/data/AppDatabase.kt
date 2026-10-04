@@ -62,6 +62,21 @@ interface ContentDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTutorials(items: List<TutorialEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertSyncedCategories(items: List<CategoryEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertSyncedCommands(items: List<CommandEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertSyncedScripts(items: List<ScriptEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertSyncedTools(items: List<ToolEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertSyncedTutorials(items: List<TutorialEntity>)
 }
 
 @Dao

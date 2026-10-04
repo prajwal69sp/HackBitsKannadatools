@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "HackBitsKannada"
-include(":app")
+include(":app", ":admin")

@@ -2,6 +2,9 @@
   "name": "HackBitsKannada Android Lab",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
   "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
     "ghcr.io/devcontainers/features/java:1": {
       "version": "17",
       "jdkDistro": "ms"
@@ -17,7 +20,8 @@
     "vscode": {
       "extensions": [
         "vscjava.vscode-java-pack",
-        "fwcd.kotlin"
+        "fwcd.kotlin",
+        "dbaeumer.vscode-eslint"
       ]
     }
   }

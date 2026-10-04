@@ -7,6 +7,12 @@ plugins {
 
 val appVersionCode = providers.gradleProperty("appVersionCode").orNull?.toIntOrNull() ?: 1
 val appVersionName = providers.gradleProperty("appVersionName").orNull ?: "1.0.0"
+val contentApiBaseUrl = providers.gradleProperty("contentApiBaseUrl")
+    .orElse(providers.environmentVariable("CONTENT_API_BASE_URL"))
+    .orElse("")
+    .get()
+    .replace("\\", "\\\\")
+    .replace("\"", "\\\"")
 val releaseKeystoreFile = providers.environmentVariable("ANDROID_KEYSTORE_FILE").orNull
 val releaseStorePassword = providers.environmentVariable("ANDROID_STORE_PASSWORD").orNull
 val releaseKeyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").orNull
@@ -29,6 +35,7 @@ android {
         versionCode = appVersionCode
         versionName = appVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "CONTENT_API_BASE_URL", "\"$contentApiBaseUrl\"")
     }
 
     signingConfigs {
@@ -52,6 +59,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     compileOptions {

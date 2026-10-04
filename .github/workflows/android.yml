@@ -31,13 +31,15 @@ jobs:
       - name: Grant Gradle wrapper permission
         run: chmod +x gradlew
 
-      - name: Run unit tests and build debug APK
-        run: ./gradlew testDebugUnitTest assembleDebug --no-daemon
+      - name: Run unit tests and build application and admin APKs
+        run: ./gradlew testDebugUnitTest :app:assembleDebug :admin:assembleDebug --no-daemon
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: hackbitskannada-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            admin/build/outputs/apk/debug/admin-debug.apk
           if-no-files-found: error
           retention-days: 14

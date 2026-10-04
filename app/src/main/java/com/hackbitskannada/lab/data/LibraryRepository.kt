@@ -1,6 +1,7 @@
 package com.hackbitskannada.lab.data
 
 import android.content.Context
+import android.util.Log
 import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -29,6 +30,15 @@ class LibraryRepository(context: Context) {
             contentDao.insertTutorials(LearningSeed.tutorials)
         }
         if (userDao.settingsOnce() == null) userDao.saveSettings(AppSettingsEntity())
+    }
+
+    suspend fun syncPublishedContent() {
+        try {
+            val synced = ContentSyncClient(database).syncPublishedContent()
+            if (synced > 0) Log.i("HackBitsContentSync", "Synced $synced published content records.")
+        } catch (error: Exception) {
+            Log.w("HackBitsContentSync", "Content sync failed; keeping the offline library available.", error)
+        }
     }
 
     suspend fun toggleFavorite(type: String, id: String) {

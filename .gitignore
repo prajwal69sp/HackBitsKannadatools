@@ -4,3 +4,12 @@
 local.properties
 *.iml
 .DS_Store
+node_modules/
+.next/
+out/
+coverage/
+.env*
+!.env.example
+public/uploads/
+web/public/uploads/
+*.tsbuildinfo
